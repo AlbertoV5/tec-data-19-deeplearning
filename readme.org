@@ -4,6 +4,55 @@
 #+SETUPFILE: ./config/org-theme-alt.config
 #+SETUPFILE: ./config/org-header.config
 
-* Template
+* Neural Network Charity Analysis
 
-Template for taking notes with Emacs and org-mode.
+** Overview
+
+In this analysis we used Deep Learning for making predictions about the successful organizations that received funding from Alphabet Soup. We managed to create a fairly successful Neural Network model for creading predictions, however, the accuracy was not as high as desired but we gained enough insight in our data to keep iterating further.
+
+** Results
+
+*** Data Preprocessing
+
+- We considered the "IS_SUCCESSFUL" variable as our target as we only need a binary classification of our data.
+- We started using 43 variables as features as converting categorical data created a lot binary features, even after the binning.
+- However, we removed the identifier variables, like the "NAME" and "EIN" as they are not features in our dataset.
+
+*** Compiling, Training, and Evaluating the Model
+
+- We started with 80 neurons in our outer layer and 30 neurons in the hidden layer but we quickly moved to a lesser number of neurons when optimizing, specially when reducing the number of dimensions via PCA and removing outliers. The last model we tried manually had 2 inner layers with 10 neurons each and an outer layer with 40 neurons.
+- We didn't achieve the 75 percent accuracy target but we managed to rech to the following results:
+
+#+begin_src example
+Loss: 0.5610514879226685,
+Accuracy: 0.7420294284820557
+#+end_src
+
+This result was possibly by removing outliers, using PCA and the Keras Tuner.
+
+- The steps we used for optimizing the model were:
+
+1. Get the outliers via: IQR, STD and K-Means clusters based on the "ASK_AMT" (asked amount).
+2. Train the first model with the new dataset without STD outliers.
+3. We tried other hyperparameters like increaing the neurons in the inner layer and changing some activation functions as well as increasing the epoch.
+4. We moved on to using Principal Component Analysis to reduce the number of dimensions.
+5. With fewer dimensions, we reduced the number of neurons in each layer and we added a second inner layer.
+6. However, this wasn't enough so we used Keras Tuner to find the "best model" which we also trained with 100 epochs.
+7. Being still far from 75, we moved on to using the dataset without the IQR outliers, which consisted in about 20% less data.
+8. We then applied the last manual model and the Keras Tuner to this new dataset and we got a result of =74.2%=.
+
+
+Outliers:
+
+[[./resources/outliers.png]]
+
+Keras Tuner:
+
+[[./resources/keras.png]]
+
+
+** Summary
+
+We weren't able to reach the 75% target accuracy but we managed to get pretty close after removing a lot of data from the dataset. This isn't ideal and we are probably better off separating the dataset depending on the 'ASK_AMT' value as the higher outliers are too far removed from the mean.
+
+I think we should use a Dendogram to separate the dataset or even a binary tree classifier so we can determine which data is "ask amount" and which one is closer to the mean, we have enough data points to split the dataset and we can try more specialized models for each one after identifying the clusters.

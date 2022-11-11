@@ -255,5 +255,4 @@ resources/keys
 resources/secrets
 .python-version
 # **/*.[jpJP][npNP][egEG]*
-**/*.[jpJP][npNP]*[gG$]
 !docs/build
